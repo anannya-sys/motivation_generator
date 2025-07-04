@@ -1,0 +1,366 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daily Motivation Generator</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+            text-align: center;
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .mood-selection {
+            margin-bottom: 30px;
+        }
+        
+        .mood-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .mood-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 20px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+        
+        .mood-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .mood-btn.selected {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            transform: translateY(-2px);
+        }
+        
+        .custom-feeling-section {
+            margin-top: 30px;
+            text-align: left;
+        }
+        
+        .custom-feeling-section h4 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .custom-feeling-section textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #ddd;
+            border-radius: 10px;
+            font-size: 16px;
+            resize: vertical;
+            min-height: 80px;
+            font-family: inherit;
+        }
+        
+        .custom-feeling-section textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .generate-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 20px 0;
+        }
+        
+        .generate-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        
+        .generate-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .loading {
+            display: none;
+            color: #667eea;
+            font-style: italic;
+            margin: 20px 0;
+        }
+        
+        .error-message {
+            display: none;
+            color: #e74c3c;
+            background: #ffebee;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        
+        .quote-container {
+            display: none;
+            background: #f8f9fa;
+            padding: 30px;
+            border-radius: 15px;
+            margin: 20px 0;
+            border-left: 5px solid #667eea;
+        }
+        
+        .quote-text {
+            font-size: 1.3em;
+            line-height: 1.6;
+            color: #333;
+            margin-bottom: 15px;
+            font-style: italic;
+        }
+        
+        .quote-mood {
+            color: #667eea;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        
+        .share-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .share-btn:hover {
+            background: #45a049;
+            transform: translateY(-1px);
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 2em;
+            }
+            
+            .mood-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .quote-text {
+                font-size: 1.1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🌟 Daily Motivation</h1>
+        <p class="subtitle">Get personalized motivation based on how you're feeling</p>
+        
+        <div class="mood-selection">
+            <h3>How are you feeling today?</h3>
+            <div class="mood-grid">
+                <div class="mood-btn" data-mood="anxious">😰 Feeling Anxious</div>
+                <div class="mood-btn" data-mood="unmotivated">😴 Unmotivated</div>
+                <div class="mood-btn" data-mood="stressed">😤 Stressed Out</div>
+                <div class="mood-btn" data-mood="need_focus">🎯 Need Focus</div>
+                <div class="mood-btn" data-mood="sad">😢 Feeling Sad</div>
+                <div class="mood-btn" data-mood="confident">💪 Ready to Conquer</div>
+                <div class="mood-btn" data-mood="tired">😴 Feeling Tired</div>
+            </div>
+            
+            <div class="custom-feeling-section">
+                <h4>Or describe your feelings in your own words:</h4>
+                <textarea 
+                    id="customFeeling" 
+                    placeholder="Tell us how you're feeling... (e.g., 'I'm feeling overwhelmed with work', 'I need confidence for my presentation', etc.)"
+                    rows="3"
+                ></textarea>
+            </div>
+        </div>
+        
+        <button class="generate-btn" id="generateBtn" disabled>
+            ✨ Generate My Motivation
+        </button>
+        
+        <div class="loading" id="loading">
+            🌟 Generating your personalized motivation...
+        </div>
+        
+        <div class="error-message" id="errorMessage">
+            <strong>Oops!</strong> Something went wrong. Please try again.
+        </div>
+        
+        <div class="quote-container" id="quoteContainer">
+            <div class="quote-text" id="quoteText"></div>
+            <div class="quote-mood" id="quoteMood"></div>
+            <button class="share-btn" id="shareBtn">📱 Share This Quote</button>
+        </div>
+    </div>
+
+    <script>
+        let selectedMood = '';
+        const moodButtons = document.querySelectorAll('.mood-btn');
+        const customFeelingTextarea = document.getElementById('customFeeling');
+        const generateBtn = document.getElementById('generateBtn');
+        const loading = document.getElementById('loading');
+        const errorMessage = document.getElementById('errorMessage');
+        const quoteContainer = document.getElementById('quoteContainer');
+        const quoteText = document.getElementById('quoteText');
+        const quoteMood = document.getElementById('quoteMood');
+        const shareBtn = document.getElementById('shareBtn');
+
+        // Enable/disable generate button
+        function updateGenerateButton() {
+            const hasSelection = selectedMood || customFeelingTextarea.value.trim();
+            generateBtn.disabled = !hasSelection;
+        }
+
+        // Handle mood selection
+        moodButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                // Remove selected class from all buttons
+                moodButtons.forEach(btn => btn.classList.remove('selected'));
+                
+                // Add selected class to clicked button
+                button.classList.add('selected');
+                selectedMood = button.dataset.mood;
+                
+                // Clear custom feeling when mood is selected
+                customFeelingTextarea.value = '';
+                
+                updateGenerateButton();
+            });
+        });
+
+        // Handle custom feeling input
+        customFeelingTextarea.addEventListener('input', () => {
+            if (customFeelingTextarea.value.trim()) {
+                // Clear mood selection when custom feeling is entered
+                moodButtons.forEach(btn => btn.classList.remove('selected'));
+                selectedMood = '';
+            }
+            updateGenerateButton();
+        });
+
+        // Handle generate button click
+        generateBtn.addEventListener('click', async () => {
+            
+            quoteContainer.style.display = 'none';
+            errorMessage.style.display = 'none';
+            
+            // Show loading
+            loading.style.display = 'block';
+            generateBtn.disabled = true;
+
+            try {
+                const response = await fetch('/get-motivation', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        mood: selectedMood,
+                        custom_feeling: customFeelingTextarea.value.trim()
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.success) {
+                    quoteText.textContent = data.quote;
+                    quoteMood.textContent = data.mood_description;
+                    
+                    
+                    loading.style.display = 'none';
+                    quoteContainer.style.display = 'block';
+                } else {
+                    throw new Error('Failed to get motivation');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                loading.style.display = 'none';
+                errorMessage.style.display = 'block';
+            } finally {
+                updateGenerateButton();
+            }
+        });
+
+        // Handle share button
+        shareBtn.addEventListener('click', () => {
+            const shareText = `"${quoteText.textContent}" - Daily Motivation`;
+            
+            if (navigator.share) {
+                navigator.share({
+                    title: 'Daily Motivation',
+                    text: shareText,
+                    url: window.location.href
+                });
+            } else {
+                // Fallback - copy to clipboard
+                navigator.clipboard.writeText(shareText).then(() => {
+                    const originalText = shareBtn.textContent;
+                    shareBtn.textContent = '✅ Copied!';
+                    setTimeout(() => {
+                        shareBtn.textContent = originalText;
+                    }, 2000);
+                });
+            }
+        });
+
+        // Initialize
+        updateGenerateButton();
+    </script>
+</body>
+</html>
